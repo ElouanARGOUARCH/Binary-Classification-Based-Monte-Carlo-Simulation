@@ -45,27 +45,53 @@ def plot_image_2d_points(samples, bins=(200, 200), range=None, alpha = 1.,show =
     if show:
         plt.show()
 
-rgb = image.imread("newton.jpg")
-lines, columns = rgb.shape[:-1]
-
 def rgb2gray(rgb):
     return numpy.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
-grey = torch.tensor(rgb2gray(rgb))
 
+class GreyScale2DImageDistribution():
+    def __init__(self, file):
+        self.rgb = image.imread(file)
+        self.lines, self.columns = self.rgb.shape[:-1]
+        self.grey = torch.tensor(rgb2gray(self.rgb))
 
-fig = plt.figure(figsize =(8,12))
-plt.tick_params(left = False, right = False , labelleft = False ,
-                labelbottom = False, bottom = False)
-plt.imshow(grey, aspect = 'auto')
+    def plot_rgb(self):
+        fig = plt.figure(figsize=(8, 12))
+        plt.tick_params(left=False, right=False, labelleft=False,
+                        labelbottom=False, bottom=False)
+        plt.imshow(self.rgb)
+        plt.show()
+
+    def plot_grey(self):
+        fig = plt.figure(figsize=(8, 12))
+        plt.tick_params(left=False, right=False, labelleft=False,
+                        labelbottom=False, bottom=False)
+        plt.imshow(self.grey)
+        plt.show()
+
+    def sample(self, num_samples):
+        vector_density = self.grey.flatten()
+        vector_density = vector_density / torch.sum(vector_density)
+        num_samples = 500000
+        cat = torch.distributions.Categorical(probs=vector_density)
+        categorical_samples = cat.sample([num_samples])
+        return torch.cat([((categorical_samples % self.columns + torch.rand(num_samples)) / self.columns).unsqueeze(-1),
+                                    (
+                                    (1 - (categorical_samples // self.columns + torch.rand(num_samples)) / self.lines)).unsqueeze(
+                                        -1)], dim=-1)
 
 #Sample data according to image
-vector_density = grey.flatten()
-vector_density = vector_density/torch.sum(vector_density)
-lines, columns = grey.shape
+distribution = GreyScale2DImageDistribution("results/newton.png")
+distribution.plot_rgb()
+distribution.plot_grey()
 num_samples = 500000
-cat = torch.distributions.Categorical(probs = vector_density)
-categorical_samples = cat.sample([num_samples])
-target_samples = torch.cat([((categorical_samples%columns + torch.rand(num_samples))/columns).unsqueeze(-1),((1-(categorical_samples//columns + torch.rand(num_samples))/lines)).unsqueeze(-1)], dim = -1)
+target_samples = distribution.sample([num_samples])
+
+#display target samples
+fig = plt.figure(figsize =(8,12))
+plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = False, bottom = False)
+plot_image_2d_points(target_samples)
+plt.show()
+
 
 #Apply logit transform to data
 logit_transform = logit(alpha = 1e-2)
@@ -90,13 +116,6 @@ unormalized_weights = torch.exp(binary_classif.logit_r(proposed_samples)).squeez
 normalized_weights = unormalized_weights/torch.sum(unormalized_weights)
 cat = torch.distributions.Categorical(normalized_weights).sample([num_samples])
 samples = proposed_samples[cat]
-
-#display original image
-fig = plt.figure(figsize =(8,12))
-plt.tick_params(left = False, right = False , labelleft = False ,
-                labelbottom = False, bottom = False)
-plt.imshow(grey, aspect = 'auto')
-plt.show()
 
 #display unormalized energy
 fig = plt.figure(figsize =(8,12))

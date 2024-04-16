@@ -1,10 +1,14 @@
 This Github Project is associated to the paper "Binary Classification Monte Carlo Sampling" https://arxiv.org/abs/2307.16035; and provides with reusable code which implements the proposed methods. 
 
+
+
 **Summary of the paper:**
 ---
 Sampling has became paramount in many statistical field and Monte Carlo estimation methods usually takes interest in sampling from a distribution which we know via its probability density function. Such methods include in particular: Accept-Reject sampling, Sampling-Importance-Resampling and Independent-Metropolis-Hastings; and these three methods share in common that the sampling mechanism involves the ratio of the target pdf and the pdf of a chosen instrumental distribution.
 The score point of our contribution is to realize that when the target distribution is known only via a set of recorded samples and the pdf is otherwise unknown, the three sampling algorithms can still be applied even though the ratio of pdf is also unknown. 
 Indeed, we propose to use a classifier which is trained to distinguish samples from the target distribution from that from the instrumental distribution and wich can indeed be turned into an approximation of the pdf ratio.
+
+![Binary Classification Based Monte Carlo Simulation](cover_readme.png "Title")
 
 **How to use the code in practice:**
 ---
