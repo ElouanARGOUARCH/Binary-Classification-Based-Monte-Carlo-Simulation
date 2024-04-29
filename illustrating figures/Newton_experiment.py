@@ -69,9 +69,13 @@ class GreyScale2DImageDistribution():
         plt.show()
 
     def sample(self, num_samples):
+        #an image can be seen as a mixture of isotropic 2d uniform distribution where each component is located at the pixels and has the size of a pixel. The mixtures weights are the pixel intensities.
+        #first compute mixture weights
         vector_density = self.grey.flatten()
+        #normalize weights
         vector_density = vector_density / torch.sum(vector_density)
         num_samples = 500000
+        #samples component assignation
         cat = torch.distributions.Categorical(probs=vector_density)
         categorical_samples = cat.sample([num_samples])
         return torch.cat([((categorical_samples % self.columns + torch.rand(num_samples)) / self.columns).unsqueeze(-1),
@@ -93,7 +97,8 @@ plot_image_2d_points(target_samples)
 plt.show()
 
 
-#Apply logit transform to data
+#Apply logit transform to data - logit transforms is an invertible transformation which transforms bounded samples into unbounded samples
+#not necessary to run the code
 logit_transform = logit(alpha = 1e-2)
 transformed_samples = logit_transform.transform(target_samples)
 
