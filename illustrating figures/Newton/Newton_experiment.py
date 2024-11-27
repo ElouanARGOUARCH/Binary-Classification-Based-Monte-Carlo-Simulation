@@ -3,7 +3,7 @@ from matplotlib import image
 import matplotlib
 import numpy
 import matplotlib.pyplot as plt
-from models_bcbmcs import *
+from models import *
 
 import torch
 

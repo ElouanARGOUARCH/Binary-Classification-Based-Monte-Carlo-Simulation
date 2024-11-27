@@ -16,9 +16,10 @@ First install the package with using the shell command:
 ```shell 
 pip install git+https://github.com/ElouanARGOUARCH/Binary-Classification-Based-Monte-Carlo-Simulation
 ```
-and import the corresponding package in python 
+and import the corresponding package in python
+
 ```python
-import models_bcbmcs
+import models
 ```
 The proposed methods takes as input a set of samples (target_samples in our example) of shape [n,d] from the target distribution and involves three objects: (i) an easy-to-samples instrumental distribution, ideally close to the target distribution,(ii) a binary classifier trained via Binary Cross entropy criterion to distinguish between target samples and instrumental samples, and (iii) a sampling algorithm.
 For small dimensional example, using a Gaussian instrumental distribution with estimated mean an covariance matrix usually provides with satisfactory results, at least for illustration purposes. This can be achieved with:

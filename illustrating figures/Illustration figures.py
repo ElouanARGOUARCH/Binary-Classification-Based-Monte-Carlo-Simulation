@@ -4,7 +4,7 @@ import math
 import sklearn
 import matplotlib
 from sklearn import datasets
-from models_bcbmcs import *
+from models import *
 
 def plot_2d_function(f,range = [[-10,10],[-10,10]], bins = [50,50], alpha = 0.7,show = True):
     with torch.no_grad():
