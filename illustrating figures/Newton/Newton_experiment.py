@@ -84,9 +84,13 @@ class GreyScale2DImageDistribution():
                                         -1)], dim=-1)
 
 #Sample data according to image
-distribution = GreyScale2DImageDistribution("results/newton.png")
+distribution = GreyScale2DImageDistribution("newton.jpg")
 distribution.plot_rgb()
-distribution.plot_grey()
+fig = plt.figure(figsize =(8,12))
+plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = False, bottom = False)
+plt.imshow(distribution.grey)
+plt.show()
+fig.savefig("newton_image.png", dpi = fig.dpi)
 lines, columns = distribution.lines, distribution.columns
 num_samples = 500000
 target_samples = distribution.sample([num_samples])
@@ -96,6 +100,7 @@ fig = plt.figure(figsize =(8,12))
 plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = False, bottom = False)
 plot_image_2d_points(target_samples)
 plt.show()
+fig.savefig("newton_samples.png", dpi = fig.dpi)
 
 
 #Apply logit transform to data - logit transforms is an invertible transformation which transforms bounded samples into unbounded samples
@@ -114,7 +119,7 @@ binary_classif = BinaryClassifier(proposed_samples, transformed_samples,[512,512
 binary_classif.train(200,10000,lr = 1e-3, weight_decay = 0, verbose = True)
 binary_classif.train(200,10000,lr = 5e-4, weight_decay = 5e-6, verbose = True)
 binary_classif.train(200,10000,lr = 1e-4, weight_decay = 5e-6, verbose = True)
-torch.save(binary_classif, 'model_newton.sav')
+torch.save(binary_classif, 'newton_model.pt')
 
 #sample the energy based model with Sampling Importance Resampling
 proposed_samples = instrumental.sample([num_samples])
@@ -128,6 +133,7 @@ fig = plt.figure(figsize =(8,12))
 plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = False, bottom = False)
 plot_2d_function(lambda x: torch.exp(binary_classif.logit_r(logit_transform.transform(x)).squeeze(-1) + instrumental.log_prob(logit_transform.transform(x)) + logit_transform.log_det(x)), bins = (lines, columns), range =([[0.,1.],[0.,1.]]))
 plt.show()
+fig.savefig("newton_approx.png", dpi = fig.dpi)
 
 #display obtained samples
 inverse_samples = logit_transform.inverse_transform(samples)
@@ -135,3 +141,4 @@ fig = plt.figure(figsize =(8,12))
 plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = False, bottom = False)
 plot_image_2d_points(inverse_samples,bins = (lines, columns))
 plt.show()
+fig.savefig("newton_approx_samples.png", dpi = fig.dpi)
