@@ -87,6 +87,7 @@ class GreyScale2DImageDistribution():
 distribution = GreyScale2DImageDistribution("results/newton.png")
 distribution.plot_rgb()
 distribution.plot_grey()
+lines, columns = distribution.lines, distribution.columns
 num_samples = 500000
 target_samples = distribution.sample([num_samples])
 
@@ -132,5 +133,5 @@ plt.show()
 inverse_samples = logit_transform.inverse_transform(samples)
 fig = plt.figure(figsize =(8,12))
 plt.tick_params(left = False, right = False , labelleft = False ,labelbottom = False, bottom = False)
-plot_image_2d_points(inverse_samples)
+plot_image_2d_points(inverse_samples,bins = (lines, columns))
 plt.show()
